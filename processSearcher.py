@@ -2,7 +2,6 @@
 import argparse
 import sys
 from colorama import Fore, Back, Style
-from collections import defaultdict
 
 # Takes an input file of results from tasklist and returns any countermeasure services	
 def searcher(input_list):
