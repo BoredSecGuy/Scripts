@@ -2,18 +2,15 @@
 import argparse
 import sys
 from colorama import Fore, Back, Style
+from collections import defaultdict
 
 # Takes an input file of results from tasklist and returns any countermeasure services	
 def searcher(input_list):
-	found = 0
-	print(Fore.GREEN + "[+] Checking against common services")
-	for key in input_list:
-		for listserv in list_of_services:
-			if listserv in key:
-				print(Fore.RED + "[!] Service identified: " + listserv)
-				found += 1
-	if found == 0:
-		print(Fore.RED + "[!] No services identified!")
+	for key in final.keys():
+		for listserv in input_list:
+			if listserv == key:
+				for i in final[key]:
+					print(Fore.RED + "[!] Service identified: " + listserv + " at pid " + str(i))
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Takes output from tasklist command and returns countermeasure services')
@@ -30,16 +27,18 @@ if __name__ == "__main__":
 	adminServices = ["MobaXterm.exe", "bash.exe", "git-bash.exe", "mmc.exe", "Code.exe", "notepad++.exe", "notepad.exe", "cmd.exe", "drwatson.exe", "DRWTSN32.EXE", "drwtsn32.exe", "dumpcap.exe", "ethereal.exe", "filemon.exe", "idag.exe", "idaw.exe", "k1205.exe", "loader32.exe", "netmon.exe", "netstat.exe", "netxray.exe", "NmWebService.exe", "nukenabber.exe", "portmon.exe", "powershell.exe", "PRTG Traffic Gr.exe", "PRTG Traffic Grapher.exe", "prtgwatchdog.exe", "putty.exe", "regmon.exe", "SystemEye.exe", "taskman.exe", "TASKMGR.EXE", "tcpview.exe", "Totalcmd.exe", "TrafMonitor.exe", "windbg.exe", "winobj.exe", "wireshark.exe", "WMonAvNScan.exe", "WMonAvScan.exe", "WMonSrv.exe","regedit.exe", "regedit32.exe", "accesschk.exe", "accesschk64.exe", "AccessEnum.exe", "ADExplorer.exe", "ADInsight.exe", "adrestore.exe", "Autologon.exe", "Autoruns.exe", "Autoruns64.exe", "autorunsc.exe", "autorunsc64.exe", "Bginfo.exe", "Bginfo64.exe", "Cacheset.exe", "Clockres.exe", "Clockres64.exe", "Contig.exe", "Contig64.exe", "Coreinfo.exe", "ctrl2cap.exe", "Dbgview.exe", "Desktops.exe", "disk2vhd.exe", "diskext.exe", "diskext64.exe", "Diskmon.exe", "DiskView.exe", "du.exe", "du64.exe", "efsdump.exe", "FindLinks.exe", "FindLinks64.exe", "handle.exe", "handle64.exe", "hex2dec.exe", "hex2dec64.exe", "junction.exe", "junction64.exe", "ldmdump.exe", "Listdlls.exe", "Listdlls64.exe", "livekd.exe", "livekd64.exe", "LoadOrd.exe", "LoadOrd64.exe", "LoadOrdC.exe", "LoadOrdC64.exe", "logonsessions.exe", "logonsessions64.exe", "movefile.exe", "movefile64.exe", "notmyfault.exe", "notmyfault64.exe", "notmyfaultc.exe", "notmyfaultc64.exe", "ntfsinfo.exe", "ntfsinfo64.exe", "pagedfrg.exe", "pendmoves.exe", "pendmoves64.exe", "pipelist.exe", "pipelist64.exe", "portmon.exe", "procdump.exe", "procdump64.exe", "procexp.exe", "procexp64.exe", "Procmon.exe", "PsExec.exe", "PsExec64.exe", "psfile.exe", "psfile64.exe", "PsGetsid.exe", "PsGetsid64.exe", "PsInfo.exe", "PsInfo64.exe", "pskill.exe", "pskill64.exe", "pslist.exe", "pslist64.exe", "PsLoggedon.exe", "PsLoggedon64.exe", "psloglist.exe", "pspasswd.exe", "pspasswd64.exe", "psping.exe", "psping64.exe", "PsService.exe", "PsService64.exe", "psshutdown.exe", "pssuspend.exe", "pssuspend64.exe", "RAMMap.exe", "RegDelNull.exe", "RegDelNull64.exe", "regjump.exe", "ru.exe", "ru64.exe", "sdelete.exe", "sdelete64.exe", "ShareEnum.exe", "ShellRunas.exe", "sigcheck.exe", "sigcheck64.exe", "streams.exe", "streams64.exe", "strings.exe", "strings64.exe", "sync.exe", "sync64.exe", "Sysmon.exe", "Sysmon64.exe", "Tcpvcon.exe", "Tcpview.exe", "Testlimit.exe", "Testlimit64.exe", "vmmap.exe", "Volumeid.exe", "Volumeid64.exe", "whois.exe", "whois64.exe", "Winobj.exe", "ZoomIt.exe", "KeePass.exe", "1Password.exe", "lastpass.exe"]
 
 	tasklist = args.processes
+
 	opened = open(tasklist,"rb")
-	list_of_services = []
+	final = {}
 
 	for service in opened.readlines():
-		lowered = service.lower()
-		sp = lowered.split()
-		for each in sp:
-			if "exe" in each:
-				list_of_services.append(each)
-	
+		lowered = service.lower().split()[:2]
+		if lowered[0] in final:
+			final[lowered[0]].append(lowered[1])
+		else:
+			final[lowered[0]] = [lowered[1]]
+
+	print(Fore.GREEN + "[+] Checking against common services")
 	searcher(avServices)
 	searcher(avServices1)
 	searcher(adminServices)
